@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import api from '../api/axios';
 import Navbar from '../components/Navbar';
 
+
 const emptyForm = { title: '', description: '', date: '', time: '' };
 
 export default function Dashboard() {
@@ -9,6 +10,8 @@ export default function Dashboard() {
   const [form, setForm] = useState(emptyForm);
   const [editingId, setEditingId] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [aiSchedule, setAiSchedule] = useState([]);
+  const [aiLoading, setAiLoading] = useState(false); 
 
   const fetchTasks = async () => {
     try {
@@ -42,6 +45,27 @@ export default function Dashboard() {
       fetchTasks();
     } catch (err) {
       console.error(err);
+    }
+  };
+  const handleGetAiSchedule = async () => {
+    try {
+      setAiLoading(true);
+      
+      // 1. Extract just the titles of your current tasks to send to the AI
+      const taskTitles = tasks.map(task => task.title).join(', ');
+      
+      // 2. Make the request using your custom api instance
+      const response = await api.post('/ai/suggest-schedule', {
+        tasks: taskTitles
+      });
+      
+      // 3. Save the structured JSON response
+      setAiSchedule(response.data);
+      
+    } catch (err) {
+      console.error("AI Error:", err);
+    } finally {
+      setAiLoading(false);
     }
   };
 
@@ -90,6 +114,29 @@ export default function Dashboard() {
   return (
     <div>
       <Navbar />
+      <div className="ai-section" style={{ margin: '20px 0', padding: '15px', border: '1px solid #ccc' }}>
+        <h3>AI Schedule Assistant</h3>
+        <button 
+          onClick={handleGetAiSchedule} 
+          disabled={aiLoading || tasks.length === 0}
+        >
+          {aiLoading ? 'Generating Schedule...' : 'Suggest Schedule'}
+        </button>
+
+        {/* Display the Structured Output from the AI */}
+        {aiSchedule.length > 0 && (
+          <div style={{ marginTop: '15px' }}>
+            <h4>Suggested Plan:</h4>
+            <ul>
+              {aiSchedule.map((item, index) => (
+                <li key={index}>
+                  <strong>{item.taskTitle}</strong> - {item.suggestedTime} (Priority: {item.priorityLevel})
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
       <div style={{ maxWidth: 600, margin: '30px auto', padding: '0 16px' }}>
         <h2>{editingId ? 'Edit Task' : 'Add Task'}</h2>
         <form onSubmit={handleSubmit} style={{ marginBottom: 30 }}>
@@ -171,6 +218,7 @@ export default function Dashboard() {
                     <button onClick={() => startEdit(task)} style={{ marginRight: 6 }}>Edit</button>
                     <button onClick={() => deleteTask(task._id)}>Delete</button>
                   </div>
+                  
                 </li>
               ))}
             </ul>
