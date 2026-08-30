@@ -144,4 +144,4 @@ App
 3. Request AI suggestions with 0 tasks → empty array, no crash.
 4. Request AI suggestions with 2+ tasks → valid structured response.
 5. Access `/` while logged out → redirected to `/login`.
-______________________________________________________________________________________________________________________________
+___________________________________________________________END_______________________________________________________________
