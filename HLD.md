@@ -75,3 +75,4 @@ The application follows a client-server architecture with polyglot persistence
 - Add caching (e.g. Redis) for category lookups if traffic grows.
 - Move to a session/token refresh strategy for longer-lived sessions.
 - Add rate limiting on auth and AI endpoints to control cost/abuse.
+______________________________________________________________________________________________________________________________

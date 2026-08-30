@@ -79,3 +79,4 @@ freelancers, or anyone organizing personal tasks day to day.
 - Free-tier hosting (Render) has cold-start delays after inactivity.
 - LLM responses must be validated/parsed defensively since output format
   cannot be 100% guaranteed.
+______________________________________________________________________________________________________________________________
